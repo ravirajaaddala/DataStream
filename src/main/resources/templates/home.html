@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<title>Data Streamer</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<style type = "text/css" media = "all">
+	       div.mainframe{
+	       		height: 200px;
+	       		border-style: outset;
+	       		border-width: thin;
+	       }  
+	       .container{
+	       		overflow: auto
+	       }
+	</style>
+	<script type="text/javascript">
+		function streamIt(){
+			var files = $("#inputFile")[0].files ; 
+			console.log('length = '+files.length);
+			var radOption = $("input[name='optradio']:checked").val();
+			let emailId = null;
+			if('email' == radOption){
+				emailId = prompt("Please enter your email id", "@gmail.com");
+				console.log('emailId = '+emailId);
+			}
+			try{
+				let i = 0
+				while( i < files.length){
+					var myFile = $("#inputFile")[0].files[i] ; 
+					var fr = new FileReader();
+			        fr.readAsText(myFile);
+			        fr.onload = function() {
+			        	//FIX bug is there. not able to pass multiple files. data is going as null
+			        	var obj = {};
+			        	obj['data'] = fr.result;
+			        	obj['option'] =  radOption;
+			        	callajax('/process','POST',obj);
+			        }; 
+			        fr.onerror = function() {
+			          alert(fr.error);
+			        }; 
+			        i++;
+				}
+				
+			}catch(e){
+				alert('please choose the files');
+			}
+			
+		}
+		function callajax(resturl,method,inputdata){
+			   // console.log("====== inputdata ==== "+inputdata);
+				$.ajax({
+					type: method,
+					url: resturl,
+					data: JSON.stringify( inputdata),
+					contentType: 'application/json',
+					dataType: 'json',
+					headers:{
+						"Access-Control-Allow-Headers":"X-Requested-With"
+					},
+					success: function(data){
+						
+					},
+			        error: function(xhr, ajaxOptions, thrownError, request, error){
+			        	
+			        	console.log('xrs.status = ' + xhr.status + '\n' + 
+			        	            'thrown error = ' + thrownError + '\n' +
+			        	            'xhr.statusText = '  + xhr.statusText + '\n' +
+			        	            'request = ' + request + '\n' +
+			        	            'error = ' + error);
+			        }
+				}).then(function(data){
+					$.each(
+							data,
+							function(index,value){
+								if('status' == index){
+									alert(value);
+									return false;
+								}
+							}	
+					);
+				});
+			}
+	</script>
+</head>
+<body>
+	<br><br><br>
+	<div class="container mainframe">
+		<br><br>
+		<div class = "input-group">
+			<input multiple type="file" class = "form-control" id="inputFile">
+			<label class="input-group">Please select an option</label>
+			<label class="radio-inline">
+		      <input type="radio" name="optradio" value="txt" checked>Save to text file
+		    </label>
+		    <label class="radio-inline">
+		      <input type="radio" name="optradio" value="email" >Send the email
+		    </label>
+		    <label class="radio-inline">
+		      <input type="radio" name="optradio" value="database" >Save to database
+		    </label>
+		    <label class="radio-inline">
+		      <input type="radio" name="optradio" value="rest" >Send to other API using rest
+		    </label>
+			<button class = "btn btn-info btn-block" onclick="streamIt()">Stream</button>
+		</div><br/>
+	</div>
+</body>
+</html>
