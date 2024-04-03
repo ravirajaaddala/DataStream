@@ -3,6 +3,8 @@ pipeline {
 
 	environment {
 		mavenHome = tool 'jenkins-maven'
+		CLOUDSDK_CORE_PROJECT='thermal-rain-417820'
+		GCLOUD_CREDS=credentials('gcloud-creds')
 	}
 
 	tools {
@@ -14,6 +16,9 @@ pipeline {
 
 		stage('Build'){
 			steps {
+				bat 'gcloud version'
+                    		bat 'gcloud auth activate-service-account --key-file=%GCLOUD_CREDS%'
+                    		bat 'gcloud compute zones list'
 				bat "mvn clean install -DskipTests"
 			}
 		}
