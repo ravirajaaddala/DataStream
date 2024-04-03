@@ -19,6 +19,7 @@ pipeline {
             steps {
                 echo 'Pushing image to Google Container Registry...'
                 bat 'gcloud auth configure-docker'
+                bat 'gcloud config set project %PROJECT_ID%'
                 bat 'docker push %IMAGE%'
             }
         }
