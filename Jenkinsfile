@@ -4,7 +4,7 @@ pipeline {
     environment {
         PROJECT_ID = 'thermal-rain-417820'
         SERVICE_NAME = 'datastream'
-        IMAGE = 'gcr.io/$PROJECT_ID/$SERVICE_NAME'
+        IMAGE = 'gcr.io/%PROJECT_ID%/%SERVICE_NAME%'
         REGION = 'us-central1' // e.g., us-central1
     }
 
