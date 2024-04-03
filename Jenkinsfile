@@ -4,6 +4,7 @@ pipeline {
     environment {
         PROJECT_ID = 'thermal-rain-417820'
         SERVICE_NAME = 'datastream'
+        IMAGE = 'gcr.io/thermal-rain-417820/datastream'
         REGION = 'us-central1' // e.g., us-central1
     }
 
@@ -11,7 +12,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building Docker image...'
-                bat 'docker build -t gcr.io/%PROJECT_ID%/%SERVICE_NAME%' .'
+                bat 'docker build -t %IMAGE% .'
             }
         }
         stage('Push') {
