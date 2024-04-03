@@ -5,6 +5,7 @@ pipeline {
 		mavenHome = tool 'jenkins-maven'
 		CLOUDSDK_CORE_PROJECT='thermal-rain-417820'
 		GCLOUD_CREDS=credentials('gcloud-creds')
+		CLIENT_EMAIL='jenkins-gcloud@thermal-rain-417820.iam.gserviceaccount.com'
 	}
 
 	tools {
@@ -33,6 +34,11 @@ pipeline {
 			steps {
 			    bat "mvn jar:jar deploy:deploy"
 			}
+		}
+	}
+	post {
+		always{
+			bat 'gcloud auth revoke %CLIENT_EMAIL%'
 		}
 	}
 }
